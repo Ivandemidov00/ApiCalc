@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestApiCalc.Model
+namespace ApiCalc.Model
 {
     public class Expression
     {

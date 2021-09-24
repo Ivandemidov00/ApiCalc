@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApiCalc", "TestApiCalc\TestApiCalc.csproj", "{7E5C8789-4569-4702-981A-DBD6E96D8218}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiCalc", "ApiCalc\ApiCalc.csproj", "{7E5C8789-4569-4702-981A-DBD6E96D8218}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
