@@ -10,9 +10,9 @@ namespace ApiCalc.Service
         {
            var result =  expression.Operation switch
             {
-                Operators.plus => Sum(expression),
-                Operators.mult => Mul(expression),
-                Operators.exp => Exp(expression),
+                Operators.Plus => Sum(expression),
+                Operators.Mult => Mul(expression),
+                Operators.Exp => Exp(expression),
                 _ => throw new ArgumentException("Недопустимая операция")
             };
             return result;

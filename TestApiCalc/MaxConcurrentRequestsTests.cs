@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 using ApiCalc;
 using ApiCalc.Middleware;
+using ApiCalc.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TestApiCalc
 {
@@ -26,12 +31,30 @@ namespace TestApiCalc
             {
                 return $"StatusCode: {StatusCode} | Timing {Timing}";
             }
+        } 
+        public static Int32 InitConfiguration()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            
+            var res = Convert.ToInt32(config["Limit"]);
+            
+            return res;
         }
-
-        private const string DEFAULT_RESPONSE = "-- Demo.AspNetCore.MaxConcurrentConnections --";
-
-        private const int SOME_CONCURRENT_REQUESTS_COUNT = 30;
-        private const int SOME_MAX_CONCURRENT_REQUESTS_LIMIT = 10;
+        
+        ITestOutputHelper output;
+        private readonly ITestOutputHelper _testOutputHelper;
+        
+        private readonly String DefaultResponce = "test";
+        
+        private readonly Int32 ConcurrentCount = 24;
+        private readonly Int32 ConcurrentLimit = InitConfiguration();
+        
+        public MaxConcurrentRequestsTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
         
 
         private TestServer PrepareTestServer(IEnumerable<KeyValuePair<string, string>> configuration = null)
@@ -56,21 +79,7 @@ namespace TestApiCalc
         }
 
         [Fact]
-        public async Task SingleRequest_ReturnsSuccessfulResponse()
-        {
-            using (TestServer server = PrepareTestServer())
-            {
-                using (HttpClient client = server.CreateClient())
-                {
-                    HttpResponseMessage response = await client.GetAsync("http://localhost:5000");
-
-                    Assert.True(response.IsSuccessStatusCode);
-                }
-            }
-        }
-
-        [Fact]
-        public async Task SingleRequest_ReturnsDefaultResponse()
+        public async Task SingleRequest()
         {
             using (TestServer server = PrepareTestServer())
             {
@@ -79,23 +88,22 @@ namespace TestApiCalc
                     HttpResponseMessage response = await client.GetAsync("http://localhost:5000");
                     string responseText = await response.Content.ReadAsStringAsync();
 
-                    Assert.Equal(DEFAULT_RESPONSE, responseText);
+                    Assert.Equal(DefaultResponce, responseText);
                 }
             }
         }
 
         [Fact]
-        public void SomeMaxConcurrentRequestsLimit_Drop_SomeConcurrentRequestsCount_CountMinusLimitRequestsReturnServiceUnavailable()
+        public void MaxConcurrentRequestsLimit()
         {
             Dictionary<string, string> configuration = new Dictionary<string, string>
             {
-                {"MaxConcurrentRequestsOptions:Limit", SOME_MAX_CONCURRENT_REQUESTS_LIMIT.ToString() },
-                {"MaxConcurrentRequestsOptions:LimitExceededPolicy", MaxConcurrentRequestsLimitExceededPolicy.Drop.ToString() }
+                {"MaxConcurrentRequestsOptions:Limit", ConcurrentLimit.ToString() },
             };
 
-            HttpResponseInformation[] responseInformation = GetResponseInformation(configuration, SOME_CONCURRENT_REQUESTS_COUNT);
-
-            Assert.Equal(SOME_CONCURRENT_REQUESTS_COUNT - SOME_MAX_CONCURRENT_REQUESTS_LIMIT, responseInformation.Count(i => i.StatusCode == HttpStatusCode.ServiceUnavailable));
+            HttpResponseInformation[] responseInformation = GetResponseInformation(configuration, ConcurrentCount);
+           
+            Assert.Equal(ConcurrentCount - ConcurrentLimit, responseInformation.Count(i => i.StatusCode == HttpStatusCode.ServiceUnavailable));
         }
         
         private HttpResponseInformation[] GetResponseInformation(Dictionary<string, string> configuration, int concurrentRequestsCount)
@@ -124,6 +132,10 @@ namespace TestApiCalc
                     StatusCode = task.Result.Response.StatusCode,
                     Timing = task.Result.Timing
                 }).ToArray();
+            }
+            foreach (var rs in responseInformation)
+            {
+                _testOutputHelper.WriteLine(rs.ToString());
             }
             return responseInformation;
         }

@@ -10,16 +10,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ApiCalc.Middleware;
+using Microsoft.Extensions.Configuration;
 
 namespace ApiCalc
 {
     public class Startup
     {
+        public IConfigurationRoot AppConfiguration { get; set; }
+
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IService,ServiceCalc>();
             services.AddControllers();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Webtest", Version = "v1"}); });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Calc", Version = "v1"}); });
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -27,17 +31,17 @@ namespace ApiCalc
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Webtest v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Calc v1"));
             }
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseMaxConcurrentRequests() .Run(async (context) =>
+           app.UseMaxConcurrentRequests() .Run(async (context) =>
             {
                 await Task.Delay(500);
 
-                await context.Response.WriteAsync("-- Demo.AspNetCore.MaxConcurrentConnections --");
+                await context.Response.WriteAsync("test");
             });
         }
     }

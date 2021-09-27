@@ -4,8 +4,8 @@ namespace ApiCalc.Service
 {
     public static class Operators
     {
-        public const String plus = "+";
-        public const String mult = "*";
-        public const String exp = "^";
+        public const String Plus = "+";
+        public const String Mult = "*";
+        public const String Exp = "^";
     }
 }

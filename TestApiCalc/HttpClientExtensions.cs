@@ -8,10 +8,7 @@ namespace TestApiCalc
     internal class HttpResponseMessageWithTiming
     {
             internal HttpResponseMessage Response { get; set; }
-    
             internal TimeSpan Timing { get; set; }
-            
-            
     }
     internal static class HttpClientExtensions
     {

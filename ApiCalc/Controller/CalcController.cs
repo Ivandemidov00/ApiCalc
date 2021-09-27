@@ -12,7 +12,7 @@ namespace ApiCalc.Controller
         public CalcController(IService service) => _Service = service;
         
         [HttpPost("calc")]
-        public  IActionResult calc(Expression model)
+        public  IActionResult Calc(Expression model)
         {
             var result =  _Service.GetResult(model);
             return Ok(result);

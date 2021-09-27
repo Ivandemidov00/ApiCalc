@@ -17,13 +17,10 @@ namespace ApiCalc.Middleware
         {
             _concurrentRequestsCount = 0;
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-            
+            _options = options.Value ;
         }
-        
         public async Task Invoke(HttpContext context)
         {
-            
             if (CheckLimitExceeded())
             {
                 IHttpResponseFeature responseFeature = context.Features.Get<IHttpResponseFeature>();
@@ -38,18 +35,18 @@ namespace ApiCalc.Middleware
         }
         private bool CheckLimitExceeded()
         {
-            bool limitExceeded;
+             bool LimitExceeded;
 
             if (_options.Limit == MaxConcurrentRequestsOptions.ConcurrentRequestsUnlimited)
             {
-                limitExceeded = false;
+                LimitExceeded = false;
             }
             else
             {
                 int initialConcurrentRequestsCount, incrementedConcurrentRequestsCount;
                 do
                 {
-                    limitExceeded = true;
+                    LimitExceeded = true;
 
                     initialConcurrentRequestsCount = _concurrentRequestsCount;
                     if (initialConcurrentRequestsCount >= _options.Limit)
@@ -57,13 +54,12 @@ namespace ApiCalc.Middleware
                         break;
                     }
 
-                    limitExceeded = false;
+                    LimitExceeded = false;
                     incrementedConcurrentRequestsCount = initialConcurrentRequestsCount + 1;
                 }
                 while (initialConcurrentRequestsCount != Interlocked.CompareExchange(ref _concurrentRequestsCount, incrementedConcurrentRequestsCount, initialConcurrentRequestsCount));
             }
-
-            return limitExceeded;
+            return LimitExceeded;
         }
 
         
