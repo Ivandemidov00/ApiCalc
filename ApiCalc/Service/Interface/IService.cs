@@ -1,7 +1,5 @@
-﻿using System;
-using ApiCalc.Model;
-
-namespace ApiCalc.Service
+﻿
+namespace ApiCalc.Service.Interface
 {
     public interface IService
     {

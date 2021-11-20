@@ -1,6 +1,4 @@
-﻿using System;
-using ApiCalc.Model;
-using ApiCalc.Service;
+﻿using ApiCalc.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCalc.Controller

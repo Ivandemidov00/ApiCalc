@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace ApiCalc.Model
 {
     public class Expression

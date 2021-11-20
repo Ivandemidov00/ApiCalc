@@ -1,16 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using ApiCalc.Middleware;
 using ApiCalc.Service;
+using ApiCalc.Service.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ApiCalc.Middleware;
-using Microsoft.Extensions.Configuration;
 
 namespace ApiCalc
 {
@@ -37,7 +35,7 @@ namespace ApiCalc
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-           app.UseMaxConcurrentRequests() .Run(async (context) =>
+            app.UseMaxConcurrentRequests() .Run(async (context) =>
             {
                 await Task.Delay(500);
 

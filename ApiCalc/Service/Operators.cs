@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace ApiCalc.Service
 {
     public static class Operators
@@ -7,5 +6,6 @@ namespace ApiCalc.Service
         public const String Plus = "+";
         public const String Mult = "*";
         public const String Exp = "^";
+        public const String PlMu = "+*";
     }
 }
